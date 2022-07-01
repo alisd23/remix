@@ -16,6 +16,7 @@ export function emptyModulesPlugin(
     setup(build) {
       build.onResolve({ filter }, (args) => {
         let resolved = path.resolve(args.resolveDir, args.path);
+
         if (
           // Limit this behavior to modules found in only the `app` directory.
           // This allows node_modules to use the `.server.js` and `.client.js`

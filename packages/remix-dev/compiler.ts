@@ -356,9 +356,17 @@ async function createBrowserBuild(
     mdxPlugin(config),
     browserRouteModulesPlugin(config, /\?browser$/),
     emptyModulesPlugin(config, /\.server(\.[jt]sx?)?$/),
-    // Must be placed before NodeModulesPolyfillPlugin, so yarn can resolve polyfills correctly
-    yarnPnpPlugin(),
     NodeModulesPolyfillPlugin(),
+    yarnPnpPlugin({
+      onLoad: async (args) => {
+        return {
+          contents: await fse.promises.readFile(args.path),
+          loader: `default`,
+          // https://esbuild.github.io/plugins/#on-load-results
+          resolveDir: path.dirname(args.path),
+        };
+      }
+    }),
   ];
 
   return esbuild.build({
